@@ -40,7 +40,7 @@ export function Home() {
 
     <header>
 
-    <h1>Nome: {studentName}</h1>
+    <h1>Nome:  {studentName}</h1>
 
     <div>
       <strong>{user.name}</strong>
