@@ -1,70 +1,56 @@
-import './styles.css'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList } from 'react-native';
 
-import {Card} from '../../components/Card'
+const AgendaBarbearia = () => {
+  const [agenda, setAgenda] = useState([]);
 
-export function Home() {
-  const [studentName, setStudentName] = useState();
-  const [students, setStudents] = useState([]);
-  const [user, setUser] = useState({name: '', avatar: ''})
-  
-  function handleAddStudent(){
-    const newStudent = {
-      name: studentName,
-      time: new Date().toLocaleTimeString("pt-br", {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-    };
+  const adicionarCompromisso = (data, horario, cliente) => {
+    const novoCompromisso = { data, horario, cliente };
+    setAgenda([...agenda, novoCompromisso]);
+  };
 
-    setStudents(prevState => [...prevState, newStudent]);
-  }
-
-  useEffect(() => {
-    fetch('https://api.github.com/users/Gabrieljsabino1')
-    .then(response => response.json())
-    .then(data => {
-      setUser({
-        name: data.name,
-        avatar: data.avatar_url,
-      })
-
-    })
-
-  }, [students]);
+  const removerCompromisso = (index) => {
+    const novaAgenda = [...agenda];
+    novaAgenda.splice(index, 1);
+    setAgenda(novaAgenda);
+  };
 
   return (
-    // fragment: é necessário uma tag para deixar todos os elementos dentro do <> </> para embrulhar ou entregar as 3 ou mais condiçoes
-    <div className="container"> 
-
-    <header>
-
-    <h1>Nome: {studentName}</h1>
-
-    <div>
-      <strong>{user.name}</strong>
-      <img src={user.avatar} alt="Foto de perfil"/>
-    </div>
-    </header>
-    <input 
-      type="text" 
-      placeholder="Digite o nome..."
-      onChange={e => setStudentName(e.target.value)}
+    <View>
+      <Text>Agenda da Barbearia</Text>
+      <TextInput
+        placeholder="Data"
+        onChangeText={(text) => setData(text)}
       />
-    <button type="button" onClick={handleAddStudent}>
-      Adicionar
-    </button>
-
-    {
-      students.map(student => (
-      <Card 
-      key= {student.time}
-      name={student.name} 
-      time={student.time} 
+      <TextInput
+        placeholder="Horário"
+        onChangeText={(text) => setHorario(text)}
       />
-      ))
-    }
-    </div>
-  )
-}
+      <TextInput
+        placeholder="Cliente"
+        onChangeText={(text) => setCliente(text)}
+      />
+      <Button
+        title="Adicionar Compromisso"
+        onPress={() => adicionarCompromisso(data, horario, cliente)}
+      />
+      <FlatList
+        data={agenda}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View>
+            <Text>Data: {item.data}</Text>
+            <Text>Horário: {item.horario}</Text>
+            <Text>Cliente: {item.cliente}</Text>
+            <Button
+              title="Remover Compromisso"
+              onPress={() => removerCompromisso(index)}
+            />
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default AgendaBarbearia;
